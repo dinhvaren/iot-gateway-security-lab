@@ -1,0 +1,29 @@
+# Environment
+.env
+
+# Node-RED
+node-red/data/
+!node-red/data/.gitkeep
+
+# Logs
+logs/*.log
+!logs/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Docker
+docker-compose.override.yml
+
+# Report output (template is managed separately)
+report/*.docx
+!report/.gitkeep

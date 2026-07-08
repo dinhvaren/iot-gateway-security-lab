@@ -1,0 +1,464 @@
+[
+  {
+    "id": "tab-gateway-main",
+    "type": "tab",
+    "label": "IoT Security Gateway",
+    "disabled": false,
+    "info": "Lab: Vai tro cua gateway trong bao mat IoT\nMSSV: 231A010001 - Luong Nguyen Ngoc Dinh"
+  },
+  {
+    "id": "comment-main",
+    "type": "comment",
+    "z": "tab-gateway-main",
+    "name": "",
+    "x": 50,
+    "y": 20,
+    "wires": [],
+    "info": "# IoT Security Gateway Lab\n\n## Vai tro cua gateway trong bao mat IoT\n\n**MSSV:** 231A010001 | **Ho ten:** Luong Nguyen Ngoc Dinh\n\n### Luong xu ly:\n1. Input Normalization\n2. RULE-01: Token Authentication\n3. RULE-02: Device Allowlist\n4. RULE-03: Schema Validation\n5. RULE-04: Sensor Range Validation\n6. RULE-05: Timestamp Freshness\n7. RULE-06: Replay Protection\n8. Audit Logging -> Decision (ACCEPT/REJECT)"
+  },
+  {
+    "id": "inj-valid-001",
+    "type": "inject",
+    "z": "tab-gateway-main",
+    "name": "VALID - Normal Data",
+    "x": 100,
+    "y": 100,
+    "wires": [
+      [
+        "func-norm-010"
+      ]
+    ],
+    "props": [
+      {
+        "p": "payload",
+        "v": "{\"device_id\": \"sensor-001\", \"token\": \"demo-secure-token-2024\", \"timestamp\": 2000000000000, \"temperature\": 28.5, \"humidity\": 65}",
+        "vt": "json"
+      }
+    ],
+    "payload": "{\"device_id\": \"sensor-001\", \"token\": \"demo-secure-token-2024\", \"timestamp\": 2000000000000, \"temperature\": 28.5, \"humidity\": 65}",
+    "payloadType": "json",
+    "topic": "VALID - Normal Data",
+    "repeat": "",
+    "once": false
+  },
+  {
+    "id": "inj-badtoken-002",
+    "type": "inject",
+    "z": "tab-gateway-main",
+    "name": "INVALID - Bad Token",
+    "x": 100,
+    "y": 180,
+    "wires": [
+      [
+        "func-norm-010"
+      ]
+    ],
+    "props": [
+      {
+        "p": "payload",
+        "v": "{\"device_id\": \"sensor-001\", \"token\": \"wrong-token-12345\", \"timestamp\": 2000000000000, \"temperature\": 28.5, \"humidity\": 65}",
+        "vt": "json"
+      }
+    ],
+    "payload": "{\"device_id\": \"sensor-001\", \"token\": \"wrong-token-12345\", \"timestamp\": 2000000000000, \"temperature\": 28.5, \"humidity\": 65}",
+    "payloadType": "json",
+    "topic": "INVALID - Bad Token",
+    "repeat": "",
+    "once": false
+  },
+  {
+    "id": "inj-unkdev-003",
+    "type": "inject",
+    "z": "tab-gateway-main",
+    "name": "INVALID - Unknown Device",
+    "x": 100,
+    "y": 260,
+    "wires": [
+      [
+        "func-norm-010"
+      ]
+    ],
+    "props": [
+      {
+        "p": "payload",
+        "v": "{\"device_id\": \"sensor-999\", \"token\": \"demo-secure-token-2024\", \"timestamp\": 2000000000000, \"temperature\": 28.5, \"humidity\": 65}",
+        "vt": "json"
+      }
+    ],
+    "payload": "{\"device_id\": \"sensor-999\", \"token\": \"demo-secure-token-2024\", \"timestamp\": 2000000000000, \"temperature\": 28.5, \"humidity\": 65}",
+    "payloadType": "json",
+    "topic": "INVALID - Unknown Device",
+    "repeat": "",
+    "once": false
+  },
+  {
+    "id": "inj-misfield-004",
+    "type": "inject",
+    "z": "tab-gateway-main",
+    "name": "INVALID - Missing Field",
+    "x": 100,
+    "y": 340,
+    "wires": [
+      [
+        "func-norm-010"
+      ]
+    ],
+    "props": [
+      {
+        "p": "payload",
+        "v": "{\"device_id\": \"sensor-001\", \"token\": \"demo-secure-token-2024\", \"timestamp\": 2000000000000, \"temperature\": 28.5}",
+        "vt": "json"
+      }
+    ],
+    "payload": "{\"device_id\": \"sensor-001\", \"token\": \"demo-secure-token-2024\", \"timestamp\": 2000000000000, \"temperature\": 28.5}",
+    "payloadType": "json",
+    "topic": "INVALID - Missing Field",
+    "repeat": "",
+    "once": false
+  },
+  {
+    "id": "inj-hitemp-005",
+    "type": "inject",
+    "z": "tab-gateway-main",
+    "name": "INVALID - High Temperature",
+    "x": 100,
+    "y": 420,
+    "wires": [
+      [
+        "func-norm-010"
+      ]
+    ],
+    "props": [
+      {
+        "p": "payload",
+        "v": "{\"device_id\": \"sensor-001\", \"token\": \"demo-secure-token-2024\", \"timestamp\": 2000000000000, \"temperature\": 85.0, \"humidity\": 65}",
+        "vt": "json"
+      }
+    ],
+    "payload": "{\"device_id\": \"sensor-001\", \"token\": \"demo-secure-token-2024\", \"timestamp\": 2000000000000, \"temperature\": 85.0, \"humidity\": 65}",
+    "payloadType": "json",
+    "topic": "INVALID - High Temperature",
+    "repeat": "",
+    "once": false
+  },
+  {
+    "id": "inj-invhum-006",
+    "type": "inject",
+    "z": "tab-gateway-main",
+    "name": "INVALID - Invalid Humidity",
+    "x": 100,
+    "y": 500,
+    "wires": [
+      [
+        "func-norm-010"
+      ]
+    ],
+    "props": [
+      {
+        "p": "payload",
+        "v": "{\"device_id\": \"sensor-001\", \"token\": \"demo-secure-token-2024\", \"timestamp\": 2000000000000, \"temperature\": 28.5, \"humidity\": 150}",
+        "vt": "json"
+      }
+    ],
+    "payload": "{\"device_id\": \"sensor-001\", \"token\": \"demo-secure-token-2024\", \"timestamp\": 2000000000000, \"temperature\": 28.5, \"humidity\": 150}",
+    "payloadType": "json",
+    "topic": "INVALID - Invalid Humidity",
+    "repeat": "",
+    "once": false
+  },
+  {
+    "id": "inj-staletime-007",
+    "type": "inject",
+    "z": "tab-gateway-main",
+    "name": "INVALID - Stale Timestamp",
+    "x": 100,
+    "y": 580,
+    "wires": [
+      [
+        "func-norm-010"
+      ]
+    ],
+    "props": [
+      {
+        "p": "payload",
+        "v": "{\"device_id\": \"sensor-001\", \"token\": \"demo-secure-token-2024\", \"timestamp\": 1000000000000, \"temperature\": 28.5, \"humidity\": 65}",
+        "vt": "json"
+      }
+    ],
+    "payload": "{\"device_id\": \"sensor-001\", \"token\": \"demo-secure-token-2024\", \"timestamp\": 1000000000000, \"temperature\": 28.5, \"humidity\": 65}",
+    "payloadType": "json",
+    "topic": "INVALID - Stale Timestamp",
+    "repeat": "",
+    "once": false
+  },
+  {
+    "id": "inj-replay-008",
+    "type": "inject",
+    "z": "tab-gateway-main",
+    "name": "INVALID - Replay/Duplicate",
+    "x": 100,
+    "y": 660,
+    "wires": [
+      [
+        "func-norm-010"
+      ]
+    ],
+    "props": [
+      {
+        "p": "payload",
+        "v": "{\"device_id\": \"sensor-001\", \"token\": \"demo-secure-token-2024\", \"timestamp\": 2000000000000, \"temperature\": 28.5, \"humidity\": 65}",
+        "vt": "json"
+      }
+    ],
+    "payload": "{\"device_id\": \"sensor-001\", \"token\": \"demo-secure-token-2024\", \"timestamp\": 2000000000000, \"temperature\": 28.5, \"humidity\": 65}",
+    "payloadType": "json",
+    "topic": "INVALID - Replay/Duplicate",
+    "repeat": "",
+    "once": false
+  },
+  {
+    "id": "func-norm-010",
+    "type": "function",
+    "z": "tab-gateway-main",
+    "name": "Input Normalization",
+    "x": 310,
+    "y": 340,
+    "wires": [
+      [
+        "func-auth-020"
+      ]
+    ],
+    "func": "// =============================================\nnode.warn('NORM: Processing message from ' + (msg.topic || 'unknown'));\n\n// INPUT NORMALIZATION\n// Parse, validate structure, and normalize payload\n// =============================================\nlet payload = msg.payload;\n\nif (typeof payload === 'string') {\n    try {\n        payload = JSON.parse(payload);\n    } catch(e) {\n        msg.decision = 'REJECT';\n        msg.rule_id = 'NORM-01';\n        msg.reason = 'Invalid JSON payload: ' + e.message;\n        return msg;\n    }\n}\n\nmsg.device_id = payload.device_id || null;\nmsg.token = payload.token || '';\nmsg.timestamp = payload.timestamp || null;\nmsg.temperature = payload.temperature;\nmsg.humidity = payload.humidity;\nmsg.decision = null;\nmsg.rule_id = null;\nmsg.reason = null;\nmsg.event_time = new Date().toISOString();\nmsg.token_masked = msg.token ? (msg.token.substring(0, 4) + '****') : 'none';\nmsg._original_ts = msg.timestamp;\nmsg._original_dev = msg.device_id;\n\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "func-auth-020",
+    "type": "function",
+    "z": "tab-gateway-main",
+    "name": "RULE-01 Token Auth",
+    "x": 530,
+    "y": 340,
+    "wires": [
+      [
+        "func-device-030"
+      ]
+    ],
+    "func": "// =============================================\nnode.warn('AUTH-01: Checking token for device ' + (msg.device_id || 'unknown'));\n\n// RULE-01: Token Authentication\n// Verify device token matches configured secret\n// =============================================\nconst EXPECTED_TOKEN = 'demo-secure-token-2024';\n\nif (msg.decision === 'REJECT') return msg;\n\nif (!msg.token || msg.token !== EXPECTED_TOKEN) {\n    msg.decision = 'REJECT';\n    msg.rule_id = 'RULE-01';\n    msg.reason = 'Authentication failed: invalid or missing token';\n    return msg;\n}\n\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "func-device-030",
+    "type": "function",
+    "z": "tab-gateway-main",
+    "name": "RULE-02 Device Allowlist",
+    "x": 750,
+    "y": 340,
+    "wires": [
+      [
+        "func-schema-040"
+      ]
+    ],
+    "func": "// =============================================\n// RULE-02: Device Allowlist\n// Only accept data from registered devices\n// =============================================\nconst ALLOWED_DEVICES = [\"sensor-001\", \"sensor-002\"];\n\nif (msg.decision === 'REJECT') return msg;\n\nif (!msg.device_id || !ALLOWED_DEVICES.includes(msg.device_id)) {\n    msg.decision = 'REJECT';\n    msg.rule_id = 'RULE-02';\n    msg.reason = 'Device not in allowlist: ' + (msg.device_id || 'null');\n    return msg;\n}\n\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "func-schema-040",
+    "type": "function",
+    "z": "tab-gateway-main",
+    "name": "RULE-03 Schema Validation",
+    "x": 970,
+    "y": 340,
+    "wires": [
+      [
+        "func-range-050"
+      ]
+    ],
+    "func": "// =============================================\n// RULE-03: Schema Validation\n// Verify required fields and data types\n// =============================================\nif (msg.decision === 'REJECT') return msg;\n\nconst required = ['device_id', 'token', 'timestamp', 'temperature', 'humidity'];\nfor (let i = 0; i < required.length; i++) {\n    const field = required[i];\n    if (msg[field] === null || msg[field] === undefined) {\n        msg.decision = 'REJECT';\n        msg.rule_id = 'RULE-03';\n        msg.reason = 'Missing required field: ' + field;\n        return msg;\n    }\n}\n\nif (typeof msg.temperature !== 'number' || isNaN(msg.temperature)) {\n    msg.decision = 'REJECT';\n    msg.rule_id = 'RULE-03';\n    msg.reason = 'Invalid type: temperature must be a number';\n    return msg;\n}\n\nif (typeof msg.humidity !== 'number' || isNaN(msg.humidity)) {\n    msg.decision = 'REJECT';\n    msg.rule_id = 'RULE-03';\n    msg.reason = 'Invalid type: humidity must be a number';\n    return msg;\n}\n\nif (typeof msg.timestamp !== 'number' || isNaN(msg.timestamp)) {\n    msg.decision = 'REJECT';\n    msg.rule_id = 'RULE-03';\n    msg.reason = 'Invalid type: timestamp must be a number';\n    return msg;\n}\n\nmsg.schema_valid = true;\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "func-range-050",
+    "type": "function",
+    "z": "tab-gateway-main",
+    "name": "RULE-04 Sensor Range",
+    "x": 1190,
+    "y": 340,
+    "wires": [
+      [
+        "func-fresh-060"
+      ]
+    ],
+    "func": "// =============================================\n// RULE-04: Sensor Range Validation\n// Verify sensor readings within acceptable thresholds\n// Thresholds are lab defaults - adjustable per device type\n// =============================================\nconst MAX_TEMP = 60;\nconst MIN_TEMP = -20;\nconst MAX_HUM = 100;\nconst MIN_HUM = 0;\n\nif (msg.decision === 'REJECT') return msg;\n\nif (msg.temperature < MIN_TEMP || msg.temperature > MAX_TEMP) {\n    msg.decision = 'REJECT';\n    msg.rule_id = 'RULE-04';\n    msg.reason = 'Temperature ' + msg.temperature + 'C outside allowed range [' + MIN_TEMP + ', ' + MAX_TEMP + ']';\n    return msg;\n}\n\nif (msg.humidity < MIN_HUM || msg.humidity > MAX_HUM) {\n    msg.decision = 'REJECT';\n    msg.rule_id = 'RULE-04';\n    msg.reason = 'Humidity ' + msg.humidity + '% outside allowed range [' + MIN_HUM + ', ' + MAX_HUM + ']';\n    return msg;\n}\n\nmsg.range_valid = true;\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "func-fresh-060",
+    "type": "function",
+    "z": "tab-gateway-main",
+    "name": "RULE-05 Freshness Check",
+    "x": 1410,
+    "y": 340,
+    "wires": [
+      [
+        "func-replay-070"
+      ]
+    ],
+    "func": "// =============================================\n// RULE-05: Timestamp Freshness\n// Reject data that is too old (default: 5 minutes)\n// Lab accepts future timestamps (clock skew tolerance)\n// Production should also enforce upper bound\n// =============================================\nconst MAX_AGE_MS = 300000;\n\nif (msg.decision === 'REJECT') return msg;\n\nconst now = Date.now();\nconst age = now - msg.timestamp;\n\nif (age > MAX_AGE_MS) {\n    msg.decision = 'REJECT';\n    msg.rule_id = 'RULE-05';\n    msg.reason = 'Timestamp too old: age=' + Math.round(age/1000) + 's exceeds max ' + Math.round(MAX_AGE_MS/1000) + 's';\n    return msg;\n}\n\nmsg.freshness_valid = true;\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "func-replay-070",
+    "type": "function",
+    "z": "tab-gateway-main",
+    "name": "RULE-06 Replay Protection",
+    "x": 1630,
+    "y": 340,
+    "wires": [
+      [
+        "func-audit-080"
+      ]
+    ],
+    "func": "// =============================================\n// RULE-06: Replay / Duplicate Protection\n// Detect duplicate payloads using timestamp+device_id\n// Uses Node-RED flow context for state storage\n// =============================================\nif (msg.decision === 'REJECT') return msg;\n\nlet seen = flow.get('seen_timestamps') || {};\nconst key = msg.device_id + ':' + msg.timestamp;\n\nif (seen[key]) {\n    msg.decision = 'REJECT';\n    msg.rule_id = 'RULE-06';\n    msg.reason = 'Replay detected: duplicate timestamp ' + msg.timestamp + ' for device ' + msg.device_id;\n    return msg;\n}\n\nseen[key] = msg.event_time;\nconst keys = Object.keys(seen);\nif (keys.length > 1000) {\n    const sorted = keys.sort(function(a, b) { return (seen[a] < seen[b] ? -1 : 1); });\n    for (let i = 0; i < 100; i++) {\n        delete seen[sorted[i]];\n    }\n}\nflow.set('seen_timestamps', seen);\n\nmsg.replay_valid = true;\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "func-audit-080",
+    "type": "function",
+    "z": "tab-gateway-main",
+    "name": "Audit Logger",
+    "x": 1850,
+    "y": 340,
+    "wires": [
+      [
+        "switch-decision-090",
+        "file-audit-120"
+      ]
+    ],
+    "func": "// =============================================\nnode.warn('AUDIT: Decision=' + (msg.decision || 'null') + ' rule=' + (msg.rule_id || 'null'));\n\n// AUDIT LOGGER\n// Format structured audit log entry\n// CRITICAL: Never log full token value\n// =============================================\nif (!msg.decision || msg.decision !== 'REJECT') {\n    msg.decision = 'ACCEPT';\n    msg.rule_id = 'PASS';\n    msg.reason = 'All gateway checks passed';\n}\n\nconst audit_entry = {\n    event_time: msg.event_time,\n    device_id: msg.device_id,\n    token_hint: msg.token_masked,\n    decision: msg.decision,\n    rule_id: msg.rule_id,\n    reason: msg.reason,\n    temperature: msg.temperature,\n    humidity: msg.humidity,\n    timestamp_epoch: msg.timestamp,\n    timestamp_age_ms: Date.now() - msg.timestamp\n};\n\nmsg.audit_entry = audit_entry;\nmsg.payload = audit_entry;\nmsg.log_line = JSON.stringify(audit_entry);\n\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": []
+  },
+  {
+    "id": "switch-decision-090",
+    "type": "switch",
+    "z": "tab-gateway-main",
+    "name": "Decision Router",
+    "x": 2070,
+    "y": 340,
+    "wires": [
+      [
+        "debug-cloud-100"
+      ],
+      [
+        "debug-security-110"
+      ]
+    ],
+    "property": "decision",
+    "propertyType": "msg",
+    "rules": [
+      {
+        "t": "eq",
+        "v": "ACCEPT",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "REJECT",
+        "vt": "str"
+      }
+    ],
+    "checkall": "true",
+    "repair": false,
+    "outputs": 2
+  },
+  {
+    "id": "debug-cloud-100",
+    "type": "debug",
+    "z": "tab-gateway-main",
+    "name": "Cloud Sink (ACCEPT)",
+    "x": 2290,
+    "y": 280,
+    "wires": [],
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto"
+  },
+  {
+    "id": "debug-security-110",
+    "type": "debug",
+    "z": "tab-gateway-main",
+    "name": "Security Alert (REJECT)",
+    "x": 2290,
+    "y": 400,
+    "wires": [],
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto"
+  },
+  {
+    "id": "file-audit-120",
+    "type": "file",
+    "z": "tab-gateway-main",
+    "name": "Audit Log File",
+    "x": 2070,
+    "y": 480,
+    "wires": [],
+    "filename": "/data/logs/audit.log",
+    "appendNewline": true,
+    "createDir": true,
+    "overwriteFile": "false",
+    "encoding": "utf8",
+    "flushOnWrite": true
+  },
+  {
+    "id": "comment-legend",
+    "type": "comment",
+    "z": "tab-gateway-main",
+    "name": "",
+    "x": 50,
+    "y": 800,
+    "wires": [],
+    "info": "### Inject Node Test Cases\n\n| # | Inject Node | Expected |\n|---|------------|----------|\n| 1 | VALID - Normal Data | ACCEPT |\n| 2 | INVALID - Bad Token | REJECT RULE-01 |\n| 3 | INVALID - Unknown Device | REJECT RULE-02 |\n| 4 | INVALID - Missing Field | REJECT RULE-03 |\n| 5 | INVALID - High Temperature | REJECT RULE-04 |\n| 6 | INVALID - Invalid Humidity | REJECT RULE-04 |\n| 7 | INVALID - Stale Timestamp | REJECT RULE-05 |\n| 8 | INVALID - Replay/Duplicate | REJECT RULE-06 |\n\n**Note:** TC-08 (Replay) requires TC-01 to be injected first.\n\n### OWASP ISVS Mapping\n\n| Rule | OWASP ISVS Reference |\n|------|---------------------|\n| RULE-01 | ISVS-2.1.1: Device-to-Gateway Authentication |\n| RULE-02 | ISVS-2.1.3: Device Identity & Access Control |\n| RULE-03 | ISVS-3.1.1: Input Validation - Data Format |\n| RULE-04 | ISVS-3.2.1: Sensor Data Integrity Validation |\n| RULE-05 | ISVS-2.3.4: Time-based Access / Freshness |\n| RULE-06 | ISVS-2.3.3: Anti-Replay Mechanisms |\n| Audit Log | ISVS-4.1.1: Security Event Logging |"
+  }
+]

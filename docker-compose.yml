@@ -1,0 +1,34 @@
+services:
+  node-red:
+    image: nodered/node-red:4.0.9
+    container_name: iot-gateway-nodered
+    restart: unless-stopped
+    ports:
+      - "1880:1880"
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+      - NODE_RED_ENABLE_PROJECTS=false
+      - NODE_RED_ENABLE_SAFE_MODE=false
+      - FLOWS=/data/flows.json
+      - GATEWAY_AUTH_TOKEN=${GATEWAY_AUTH_TOKEN:-demo-secure-token-2024}
+      - GATEWAY_ALLOWED_DEVICES=${GATEWAY_ALLOWED_DEVICES:-sensor-001,sensor-002}
+      - GATEWAY_MAX_TEMP=${GATEWAY_MAX_TEMP:-60}
+      - GATEWAY_MIN_TEMP=${GATEWAY_MIN_TEMP:--20}
+      - GATEWAY_MAX_HUMIDITY=${GATEWAY_MAX_HUMIDITY:-100}
+      - GATEWAY_MIN_HUMIDITY=${GATEWAY_MIN_HUMIDITY:-0}
+      - GATEWAY_MAX_AGE_MS=${GATEWAY_MAX_AGE_MS:-300000}
+    volumes:
+      - ./node-red/data:/data
+      - ./logs:/data/logs
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:1880/',function(r){process.exit(r.statusCode===200?0:1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - iot-gateway-net
+
+networks:
+  iot-gateway-net:
+    driver: bridge
