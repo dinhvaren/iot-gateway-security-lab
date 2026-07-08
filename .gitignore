@@ -24,6 +24,7 @@ Thumbs.db
 # Docker
 docker-compose.override.yml
 
-# Report output (template is managed separately)
+# Report
 report/*.docx
+!report/CapNhatTienDo_*.docx
 !report/.gitkeep

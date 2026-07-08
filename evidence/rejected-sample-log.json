@@ -1,0 +1,1 @@
+{"event_time":"2026-07-08T03:59:03.973Z","device_id":"sensor-001","token_hint":"wron****","decision":"REJECT","rule_id":"RULE-01","reason":"Authentication failed: invalid or missing token","temperature":28.5,"humidity":65,"timestamp_epoch":2000000000000,"timestamp_age_ms":-216516856025}

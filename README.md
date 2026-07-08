@@ -6,7 +6,7 @@
 **Lớp/Học phần:** INT4410 - Bảo mật trong IoT
 **Hình thức:** Cá nhân
 
-> **GitHub Repository:** SẼ CẬP NHẬT SAU KHI TẠO REPO
+> **GitHub Repository:** https://github.com/dinhvaren/iot-gateway-security-lab
 
 ---
 
@@ -200,6 +200,14 @@ cat logs/audit.log
 
 Xem chi tiết tại [docs/DEMO_60_GIAY.md](docs/DEMO_60_GIAY.md)
 
+### 5.4. Video Demo (Bắt buộc)
+
+Video demo 60-90 giây quay màn hình thực tế lab đang chạy.
+
+- **Hướng dẫn quay:** [docs/HUONG_DAN_QUAY_VIDEO_DEMO.md](docs/HUONG_DAN_QUAY_VIDEO_DEMO.md)
+- **Kịch bản lời nói:** [docs/KICH_BAN_VIDEO_DEMO.md](docs/KICH_BAN_VIDEO_DEMO.md)
+- **Video:** Sẽ cập nhật sau khi quay (Google Drive / YouTube Unlisted)
+
 ---
 
 ## 6. Test Cases
@@ -314,6 +322,6 @@ iot-gateway-security-lab/
 
 ---
 
-**GitHub Repository:** SẼ CẬP NHẬT SAU KHI TẠO REPO
+**GitHub Repository:** https://github.com/dinhvaren/iot-gateway-security-lab
 
 *Ngày thực hiện: 08/07/2026*

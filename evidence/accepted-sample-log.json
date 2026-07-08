@@ -1,0 +1,1 @@
+{"event_time":"2026-07-08T03:59:03.938Z","device_id":"sensor-001","token_hint":"demo****","decision":"ACCEPT","rule_id":"PASS","reason":"All gateway checks passed","temperature":28.5,"humidity":65,"timestamp_epoch":2000000000000,"timestamp_age_ms":-216516856060}

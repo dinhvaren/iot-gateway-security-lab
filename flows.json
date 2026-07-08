@@ -228,7 +228,7 @@
         "func-auth-020"
       ]
     ],
-    "func": "// =============================================\nnode.warn('NORM: Processing message from ' + (msg.topic || 'unknown'));\n\n// INPUT NORMALIZATION\n// Parse, validate structure, and normalize payload\n// =============================================\nlet payload = msg.payload;\n\nif (typeof payload === 'string') {\n    try {\n        payload = JSON.parse(payload);\n    } catch(e) {\n        msg.decision = 'REJECT';\n        msg.rule_id = 'NORM-01';\n        msg.reason = 'Invalid JSON payload: ' + e.message;\n        return msg;\n    }\n}\n\nmsg.device_id = payload.device_id || null;\nmsg.token = payload.token || '';\nmsg.timestamp = payload.timestamp || null;\nmsg.temperature = payload.temperature;\nmsg.humidity = payload.humidity;\nmsg.decision = null;\nmsg.rule_id = null;\nmsg.reason = null;\nmsg.event_time = new Date().toISOString();\nmsg.token_masked = msg.token ? (msg.token.substring(0, 4) + '****') : 'none';\nmsg._original_ts = msg.timestamp;\nmsg._original_dev = msg.device_id;\n\nreturn msg;",
+    "func": "// =============================================\n\n// INPUT NORMALIZATION\n// Parse, validate structure, and normalize payload\n// =============================================\nlet payload = msg.payload;\n\nif (typeof payload === 'string') {\n    try {\n        payload = JSON.parse(payload);\n    } catch(e) {\n        msg.decision = 'REJECT';\n        msg.rule_id = 'NORM-01';\n        msg.reason = 'Invalid JSON payload: ' + e.message;\n        return msg;\n    }\n}\n\nmsg.device_id = payload.device_id || null;\nmsg.token = payload.token || '';\nmsg.timestamp = payload.timestamp || null;\nmsg.temperature = payload.temperature;\nmsg.humidity = payload.humidity;\nmsg.decision = null;\nmsg.rule_id = null;\nmsg.reason = null;\nmsg.event_time = new Date().toISOString();\nmsg.token_masked = msg.token ? (msg.token.substring(0, 4) + '****') : 'none';\nmsg._original_ts = msg.timestamp;\nmsg._original_dev = msg.device_id;\n\nreturn msg;",
     "outputs": 1,
     "noerr": 0,
     "initialize": "",
@@ -247,7 +247,7 @@
         "func-device-030"
       ]
     ],
-    "func": "// =============================================\nnode.warn('AUTH-01: Checking token for device ' + (msg.device_id || 'unknown'));\n\n// RULE-01: Token Authentication\n// Verify device token matches configured secret\n// =============================================\nconst EXPECTED_TOKEN = 'demo-secure-token-2024';\n\nif (msg.decision === 'REJECT') return msg;\n\nif (!msg.token || msg.token !== EXPECTED_TOKEN) {\n    msg.decision = 'REJECT';\n    msg.rule_id = 'RULE-01';\n    msg.reason = 'Authentication failed: invalid or missing token';\n    return msg;\n}\n\nreturn msg;",
+    "func": "// =============================================\n\n// RULE-01: Token Authentication\n// Verify device token matches configured secret\n// =============================================\nconst EXPECTED_TOKEN = 'demo-secure-token-2024';\n\nif (msg.decision === 'REJECT') return msg;\n\nif (!msg.token || msg.token !== EXPECTED_TOKEN) {\n    msg.decision = 'REJECT';\n    msg.rule_id = 'RULE-01';\n    msg.reason = 'Authentication failed: invalid or missing token';\n    return msg;\n}\n\nreturn msg;",
     "outputs": 1,
     "noerr": 0,
     "initialize": "",
@@ -362,7 +362,7 @@
         "file-audit-120"
       ]
     ],
-    "func": "// =============================================\nnode.warn('AUDIT: Decision=' + (msg.decision || 'null') + ' rule=' + (msg.rule_id || 'null'));\n\n// AUDIT LOGGER\n// Format structured audit log entry\n// CRITICAL: Never log full token value\n// =============================================\nif (!msg.decision || msg.decision !== 'REJECT') {\n    msg.decision = 'ACCEPT';\n    msg.rule_id = 'PASS';\n    msg.reason = 'All gateway checks passed';\n}\n\nconst audit_entry = {\n    event_time: msg.event_time,\n    device_id: msg.device_id,\n    token_hint: msg.token_masked,\n    decision: msg.decision,\n    rule_id: msg.rule_id,\n    reason: msg.reason,\n    temperature: msg.temperature,\n    humidity: msg.humidity,\n    timestamp_epoch: msg.timestamp,\n    timestamp_age_ms: Date.now() - msg.timestamp\n};\n\nmsg.audit_entry = audit_entry;\nmsg.payload = audit_entry;\nmsg.log_line = JSON.stringify(audit_entry);\n\nreturn msg;",
+    "func": "// =============================================\n\n// AUDIT LOGGER\n// Format structured audit log entry\n// CRITICAL: Never log full token value\n// =============================================\nif (!msg.decision || msg.decision !== 'REJECT') {\n    msg.decision = 'ACCEPT';\n    msg.rule_id = 'PASS';\n    msg.reason = 'All gateway checks passed';\n}\n\nconst audit_entry = {\n    event_time: msg.event_time,\n    device_id: msg.device_id,\n    token_hint: msg.token_masked,\n    decision: msg.decision,\n    rule_id: msg.rule_id,\n    reason: msg.reason,\n    temperature: msg.temperature,\n    humidity: msg.humidity,\n    timestamp_epoch: msg.timestamp,\n    timestamp_age_ms: Date.now() - msg.timestamp\n};\n\nmsg.audit_entry = audit_entry;\nmsg.payload = audit_entry;\nmsg.log_line = JSON.stringify(audit_entry);\n\nreturn msg;",
     "outputs": 1,
     "noerr": 0,
     "initialize": "",
