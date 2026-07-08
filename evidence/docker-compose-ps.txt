@@ -1,2 +1,2 @@
-NAME                  IMAGE                    COMMAND             SERVICE    CREATED          STATUS                    PORTS
-iot-gateway-nodered   nodered/node-red:4.0.9   "./entrypoint.sh"   node-red   20 minutes ago   Up 34 seconds (healthy)   0.0.0.0:1880->1880/tcp, [::]:1880->1880/tcp
+NAME                  IMAGE                    COMMAND             SERVICE    CREATED       STATUS                       PORTS
+iot-gateway-nodered   nodered/node-red:4.0.9   "./entrypoint.sh"   node-red   2 hours ago   Up About an hour (healthy)   0.0.0.0:1880->1880/tcp, [::]:1880->1880/tcp
