@@ -27,4 +27,5 @@ docker-compose.override.yml
 # Report
 report/*.docx
 !report/CapNhatTienDo_*.docx
+!report/LuongNguyenNgocDinh_*.docx
 !report/.gitkeep
